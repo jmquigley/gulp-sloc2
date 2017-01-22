@@ -8,7 +8,6 @@ var sloc = require('sloc');
 
 function gulpSloc(options) {
   var supportedExtensions = sloc.extensions;
-  var log = gutil.log;
   var colors = gutil.colors;
   var File = gutil.File;
 
@@ -17,7 +16,8 @@ function gulpSloc(options) {
     reportType: 'stdout',
     reportFile: 'sloc.json',
     reportElements: {},
-    metrics: ['total', 'source', 'comment', 'single', 'block', 'mixed', 'empty', 'file']
+    metrics: ['total', 'source', 'comment', 'single', 'block', 'mixed', 'empty', 'file'],
+    log: gutil.log
   }, (options || {}));
   options.reportElements = _.extend({
     mode: true,
@@ -75,29 +75,29 @@ function gulpSloc(options) {
       /*jshint validthis: true*/
 
       if (options.reportElements.before) {
-        log(options.reportElements.before);
+        options.log(options.reportElements.before);
       }
       
-      if ('total' in counters)    log('        physical lines : ' + colors.green(String(counters.total)));
-      if ('source' in counters)   log('  lines of source code : ' + colors.green(String(counters.source)));
-      if ('comment' in counters)  log('         total comment : ' + colors.cyan(String(counters.comment)));
-      if ('single' in counters)   log('           single-line : ' + String(counters.single));
-      if ('block' in counters)    log('                 block : ' + String(counters.block));
-      if ('mixed' in counters)    log('                 mixed : ' + String(counters.mixed));
-      if ('empty' in counters)    log('                 empty : ' + colors.red(String(counters.empty)));
-      if (options.reportElements.mode || ('file' in counters)) log('');
-      if ('file' in counters)     log('  number of files read : ' + colors.green(String(counters.file)));
+      if ('total' in counters)    options.log('        physical lines : ' + colors.green(String(counters.total)));
+      if ('source' in counters)   options.log('  lines of source code : ' + colors.green(String(counters.source)));
+      if ('comment' in counters)  options.log('         total comment : ' + colors.cyan(String(counters.comment)));
+      if ('single' in counters)   options.log('           single-line : ' + String(counters.single));
+      if ('block' in counters)    options.log('                 block : ' + String(counters.block));
+      if ('mixed' in counters)    options.log('                 mixed : ' + String(counters.mixed));
+      if ('empty' in counters)    options.log('                 empty : ' + colors.red(String(counters.empty)));
+      if (options.reportElements.mode || ('file' in counters)) options.log('');
+      if ('file' in counters)     options.log('  number of files read : ' + colors.green(String(counters.file)));
 
       if (options.reportElements.mode) {
         var modeMessage = options.tolerant ?
           colors.yellow('         tolerant mode ') :
           colors.red('           strict mode ');
 
-        log(modeMessage);
+        options.log(modeMessage);
       }
 
       if (options.reportElements.after) {
-        log(options.reportElements.after);
+        options.log(options.reportElements.after);
       }
 
       this.emit('end');
